@@ -37,7 +37,7 @@ def read_file(filename):
             for line in f:
 
                 stripped_line = line.strip()
-                if stripped_line:
+                if stripped_line: 
                     data.append(stripped_line)
     except FileNotFoundError:
         return None
