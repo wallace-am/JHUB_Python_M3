@@ -1,0 +1,116 @@
+### Route Plotter with Start (S) and End (E) Markers ###
+
+def display_grid():
+    print("---","+-----" * 12,"+", sep="")
+    y_num = 12
+    x_number = 1
+    for row in range(12):
+        for col in range(1):
+            if y_num >=10:
+                print("",y_num, end="")
+            else:
+                print("",y_num, end=" ")
+            y_num = y_num - 1
+#needs work to get formatting correct#
+            for col in range(12):
+                if grid[row][col]:
+                    print(": ",grid[row][col]," ", end="")
+                else:
+                    print(":  ",grid[row][col]," ", end="")
+        print(":")
+        print("---","+-----" * 12,"+",sep="")
+    print("   :", end="")
+    for col in range(12):
+        if x_number <= 9:
+            print(" ",x_number," :", end="")
+            x_number = x_number + 1
+        else:
+            print(" ",x_number,":", end="")
+            x_number = x_number + 1
+    print('\n')
+
+
+
+def read_file(filename):
+    data = []
+    try:
+        with open(filename, 'r') as f:
+            for line in f:
+
+                stripped_line = line.strip()
+                if stripped_line:
+                    data.append(stripped_line)
+    except FileNotFoundError:
+        return None
+    return data
+
+def start_position(data):
+    try:
+        start_x = int(data[0]) - 1  # X coordinate (column), 0-based
+        start_y = 12 - int(data[1])  # Y coordinate (row), flipped because 12 at top
+        return start_x, start_y
+    except (ValueError, IndexError):
+        return None, None
+
+def plot_route(start_x, start_y, instructions):
+    coords = [(start_x + 1, 12 - start_y)]  # (X, Y) path (adjusted back for display)
+    x = start_x
+    y = start_y
+
+    # Only mark start now, don't build other markers until route done
+    path_positions = [(x, y)]  
+
+    for move in instructions:
+        if move == 'N':
+            y -= 1
+        elif move == 'S':
+            y += 1
+        elif move == 'E':
+            x += 1
+        elif move == 'W':
+            x -= 1
+        else:
+            continue  # Ignore invalid moves
+
+        if x < 0 or x > 11 or y < 0 or y > 11:
+            print("Error: The route is outside of the grid.")
+            return None
+
+        path_positions.append((x, y))
+        coords.append((x + 1, 12 - y))
+
+    # After confirming valid path, mark Start, End, and path
+    grid[path_positions[0][1]][path_positions[0][0]] = 'S'  # Start
+    for pos in path_positions[1:-1]:
+        grid[pos[1]][pos[0]] = 'X'  # Route path
+    grid[path_positions[-1][1]][path_positions[-1][0]] = 'E'  # End
+
+    return coords
+
+# Main program
+while True:
+    filename = input("Enter the next route instructions file, or enter STOP to finish: ").strip()
+    if filename.upper() == 'STOP':
+        break
+
+    data = read_file(filename)
+    if data is None:
+        print("File not found")
+        continue
+
+    # Reset grid
+    grid = [['' for _ in range(12)] for _ in range(12)]
+
+    start_x, start_y = start_position(data)
+    if start_x is None or start_y is None:
+        print("Error: Invalid starting coordinates.")
+        continue
+
+    instructions = data[2:]  # Moves only
+
+    coords = plot_route(start_x, start_y, instructions)
+    if coords:
+        display_grid()
+        print("Route coordinates:")
+        for coord in coords:
+            print(coord)
