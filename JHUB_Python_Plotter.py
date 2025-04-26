@@ -56,7 +56,7 @@ def plot_route(start_x, start_y, instructions):
     x = start_x
     y = start_y
 
-    # Only mark start now, don't build other markers until route done
+    
     path_positions = [(x, y)]  
 
     for move in instructions:
