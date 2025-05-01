@@ -1,5 +1,6 @@
 ### Route Plotter with Start (S) and End (E) Markers ###
 
+### Grid ###
 def display_grid():
     print("---","+-----" * 12,"+", sep="")
     y_num = 12
@@ -30,6 +31,8 @@ def display_grid():
         x_number += 1
     print('\n')
 
+### Files ###
+
 def read_file(filename):
     data = []
     try:
@@ -43,20 +46,23 @@ def read_file(filename):
         return None
     return data
 
+### Start position ###
+
 def start_position(data):
     try:
         start_x = int(data[0]) - 1  # X coordinate (column), 0-based
-        start_y = 12 - int(data[1])  # Y coordinate (row), flipped because 12 at top
+        start_y = 12 - int(data[1])  # Y coordinate (row), flipped with 12 at top
         return start_x, start_y
     except (ValueError, IndexError):
         return None, None
+
+### Plotter ###
 
 def plot_route(start_x, start_y, instructions):
     coords = [(start_x + 1, 12 - start_y)]  # (X, Y) path (adjusted back for display)
     x = start_x
     y = start_y
 
-    
     path_positions = [(x, y)]  
 
     for move in instructions:
@@ -78,7 +84,7 @@ def plot_route(start_x, start_y, instructions):
         path_positions.append((x, y))
         coords.append((x + 1, 12 - y))
 
-    # After confirming valid path, mark Start, End, and path
+    # After confirming if valid path, mark Start, End, and path
     grid[path_positions[0][1]][path_positions[0][0]] = 'S'  # Start
     for pos in path_positions[1:-1]:
         grid[pos[1]][pos[0]] = 'X'  # Route path
